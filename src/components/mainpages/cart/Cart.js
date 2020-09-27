@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { GlobalState } from "../../../GlobalState";
-import { Link } from "react-router-dom";
 import axios from "axios";
+import PaypalButton from "./PaypalButton";
 
 export default function Cart() {
   const state = useContext(GlobalState);
@@ -60,6 +60,10 @@ export default function Cart() {
     }
   };
 
+  const tranSuccess = async (payment) => {
+    console.log(payment);
+  };
+
   if (cart.length === 0) {
     return (
       <h2 style={{ textAlign: "center", fontSize: "5rem" }}>Cart Empty</h2>
@@ -91,7 +95,7 @@ export default function Cart() {
       ))}
       <div className="total">
         <h3>Total: Rs. {total}</h3>
-        <Link to="#!">Payment</Link>
+        <PaypalButton total={total} tranSuccess={tranSuccess} />
       </div>
     </div>
   );
