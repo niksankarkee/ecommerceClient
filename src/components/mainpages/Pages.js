@@ -4,6 +4,7 @@ import Products from "./products/Products";
 import DetailProduct from "./detailProduct/DetailProduct";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
+import Categories from "./categories/Categories";
 import OrderHistory from "./history/OrderHistory";
 import OrderDetail from "./history/OrderDetails";
 import Cart from "./cart/Cart";
@@ -14,6 +15,7 @@ import { GlobalState } from "../../GlobalState";
 export default function Pages() {
   const state = useContext(GlobalState);
   const [isLogged] = state.userAPI.isLogged;
+  const [isAdmin] = state.userAPI.isAdmin;
   return (
     <Switch>
       <Route path="/" exact component={Products} />
@@ -24,6 +26,11 @@ export default function Pages() {
         path="/register"
         exact
         component={isLogged ? NotFound : Register}
+      />
+      <Route
+        path="/category"
+        exact
+        component={isAdmin ? Categories : NotFound}
       />
       <Route
         path="/history"
