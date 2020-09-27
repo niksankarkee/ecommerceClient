@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { GlobalState } from "../../GlobalState";
 import Menu from "./icon/menu.svg";
 import Close from "./icon/close.svg";
@@ -8,8 +8,8 @@ import axios from "axios";
 
 export default function Header() {
   const state = useContext(GlobalState);
-  const [isLogged, setIsLogged] = state.userAPI.isLogged;
-  const [isAdmin, setIsAdmin] = state.userAPI.isAdmin;
+  const [isLogged] = state.userAPI.isLogged;
+  const [isAdmin] = state.userAPI.isAdmin;
   const [cart] = state.userAPI.cart;
 
   const logoutUser = async () => {
