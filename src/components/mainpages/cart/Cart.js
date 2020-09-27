@@ -28,12 +28,22 @@ export default function Cart() {
   const decrement = (id) => {
     cart.forEach((item) => {
       if (item._id === id) {
-        item.quantity === 1 ? item.quantity = 1: item.quantity -= 1;
+        item.quantity === 1 ? (item.quantity = 1) : (item.quantity -= 1);
       }
     });
     setCart([...cart]);
   };
 
+  const removeProduct = (id) => {
+    if (window.confirm("Do you want to delete this product?")) {
+      cart.forEach((item, index) => {
+        if (item._id === id) {
+          cart.splice(index, 1);
+        }
+      });
+      setCart([...cart]);
+    }
+  };
 
   if (cart.length === 0) {
     return (
@@ -58,7 +68,9 @@ export default function Cart() {
               <span>{product.quantity}</span>
               <button onClick={() => increment(product._id)}> + </button>
             </div>
-            <div className="delete">X</div>
+            <div className="delete" onClick={() => removeProduct(product._id)}>
+              X
+            </div>
           </div>
         </div>
       ))}
