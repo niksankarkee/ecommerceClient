@@ -9,6 +9,8 @@ import OrderHistory from "./history/OrderHistory";
 import OrderDetail from "./history/OrderDetails";
 import Cart from "./cart/Cart";
 import NotFound from "./utils/not_found/NotFound";
+import CreateProduct from "./createProduct/CreateProduct";
+
 
 import { GlobalState } from "../../GlobalState";
 
@@ -31,6 +33,11 @@ export default function Pages() {
         path="/category"
         exact
         component={isAdmin ? Categories : NotFound}
+      />
+      <Route
+        path="/create_product"
+        exact
+        component={isAdmin ? CreateProduct : NotFound}
       />
       <Route
         path="/history"
