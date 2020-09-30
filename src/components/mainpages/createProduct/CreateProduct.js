@@ -1,7 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { GlobalState } from "../../../GlobalState";
 import Loading from "../utils/Loading/Loading";
+import { useHistory, useParams } from "react-router-dom";
 
 const initialState = {
   product_id: "",
@@ -11,6 +12,7 @@ const initialState = {
   content:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultrices feugiat egestas.  Vivamus vestibulum, felis nec laoreet rhoncus",
   category: "",
+  _id: "",
 };
 
 function CreateProduct() {
@@ -21,6 +23,27 @@ function CreateProduct() {
   const [loading, setLoading] = useState(false);
   const [isAdmin] = state.userAPI.isAdmin;
   const [token] = state.token;
+  const history = useHistory();
+  const param = useParams();
+
+  const [products] = state.ProductsAPI.products;
+  const [onEdit, setOnEdit] = useState(false);
+
+  useEffect(() => {
+    if (param.id) {
+      products.forEach((product) => {
+        setOnEdit(true);
+        if (product._id === param.id) {
+          setProduct(product);
+          setImages(product.images);
+        }
+      });
+    } else {
+      setOnEdit(false);
+      setProduct(initialState);
+      setImages(false);
+    }
+  }, [param.id, products]);
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -85,6 +108,42 @@ function CreateProduct() {
     setProduct({ ...product, [name]: value });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (!isAdmin) {
+        return alert("You're not an admin");
+      }
+      if (!images) {
+        return alert("No Image Selected");
+      }
+
+      if (onEdit) {
+        await axios.put(
+          `/api/products/${product._id}`,
+          { ...product, images },
+          {
+            headers: { Authorization: token },
+          }
+        );
+      } else {
+        await axios.post(
+          "/api/products",
+          { ...product, images },
+          {
+            headers: { Authorization: token },
+          }
+        );
+      }
+
+      setImages(false);
+      setProduct(initialState);
+      history.push("/");
+    } catch (err) {
+      alert(err.response.data.msg);
+    }
+  };
+
   const styleUpload = {
     display: images ? "block" : "none",
   };
@@ -107,7 +166,7 @@ function CreateProduct() {
           )}
         </div>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="row">
             <label htmlFor="product_id">Product ID</label>
             <input
@@ -117,6 +176,7 @@ function CreateProduct() {
               required
               value={product.product_id}
               onChange={handleChangeInput}
+              disabled={onEdit}
             />
           </div>
 
@@ -188,7 +248,7 @@ function CreateProduct() {
             </select>
           </div>
 
-          <button type="submit">Create</button>
+          <button type="submit">{onEdit ? "Update" : "Create"}</button>
         </form>
       </div>
     </>
